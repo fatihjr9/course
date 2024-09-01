@@ -13,4 +13,8 @@ class Course extends Model
     {
         return $this->hasMany(SubCourse::class);
     }
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

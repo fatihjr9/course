@@ -38,20 +38,34 @@
             </a>
             <div class="flex items-center md:order-2 space-x-2 md:space-x-0">
                 @auth
-                    <button type="button" class="flex rounded-lg border px-4 py-2 lg:mr-2" id="cart-user" aria-expanded="false" data-dropdown-toggle="cart-user-dropdown" data-dropdown-placement="bottom">
-                        <p>Cart</p>
+                    <button type="button" class="flex items-center justify-between rounded-lg border w-20 p-2 lg:mr-2" id="cart-user" aria-expanded="false" data-dropdown-toggle="cart-user-dropdown" data-dropdown-placement="bottom">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+                        <p class="px-3 py-0.5 bg-orange-100 text-orange-500 rounded-lg font-medium text-sm">{{ $cart->count() }}</p>
                     </button>
-                    <div class="z-50 hidden my-4 text-base list-none bg-white rounded-lg shadow" id="cart-user-dropdown">
+                    <div class="z-50 hidden my-4 text-base list-none bg-white rounded-lg shadow w-60" id="cart-user-dropdown">
                         @if($cart->isEmpty())
                             <p class="px-4 py-3 text-sm text-gray-700">Tambahkan kursus dahulu</p>
                         @else
                             @foreach($cart as $index => $item)
-                                <div class="px-4 py-3 flex flex-row gap-x-4 justify-between border-b pb-2">
-                                    <p class="block text-sm text-gray-900">{{ $item->course->nama }}</p>
-                                    <p class="block text-sm text-gray-500">Rp {{ $item->course->harga }}</p>
+                                <div class="flex flex-row items-center justify-between px-4 py-2 border-b pb-2">
+                                    <div class="flex flex-col gap-y-1">
+                                        <p class="block text-sm">{{ $item->course->nama }}</p>
+                                        <p class="block text-sm text-gray-500">Rp {{ $item->course->harga }}</p>
+                                    </div>
+                                    <form action="{{ route('client-rm-cart', $item->id) }}" method="POST" class="remove-from-cart text-sm p-1.5 bg-red-100 text-red-500 rounded-lg">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             @endforeach
-                            <ul class="">
+                            <ul>
                                 <li>
                                     <a href="{{ route('dashboard-user') }}" class="block w-full text-center mx-auto px-4 py-2 text-sm text-green-700 bg-green-100">Checkout</a>
                                 </li>
@@ -123,29 +137,44 @@
         <div class="font-sans text-gray-900 antialiased px-6">
             {{ $slot }}
         </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
         <script>
-        $(document).ready(function() {
-            $('.addCartClient').on('click', function(e) {
-                e.preventDefault();
-                var courseId = $(this).data('course-id');
+            // Add
+            $('form.add-to-cart').on('submit', function(event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var actionUrl = form.attr('action');
 
                 $.ajax({
-                    url: '{{ route('client-add-cart') }}',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        course_id: courseId
-                    },
+                    type: form.attr('method'),
+                    url: actionUrl,
+                    data: form.serialize(),
                     success: function(response) {
+                        alert('Item added to cart!');
                         window.location.reload();
-                    },
-                    error: function(xhr) {
-                        alert('Terjadi kesalahan saat menambahkan item ke keranjang.');
                     }
                 });
             });
-        });
+            // Remove
+            $('form.remove-from-cart').on('submit', function(event) {
+                event.preventDefault();
+
+                var form = $(this);
+                var actionUrl = form.attr('action');
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: actionUrl,
+                    data: form.serialize(),
+                    success: function(response) {
+                        alert('Item removed from cart!');
+                        window.location.reload();
+                    }
+                });
+            });
+
         </script>
         @livewireScripts
     </body>

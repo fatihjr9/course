@@ -28,7 +28,7 @@
                         <h5 class="text-xl font-semibold">Rp {{ number_format($item->harga, 0, ',', '.') }}</h5>
                         <div class="flex flex-row items-center justify-between gap-2">
                             @if(Auth::check())
-                                <form action="{{ route('client-add-cart') }}" method="POST" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl addCartClient">
+                                <form action="{{ route('client-add-cart') }}" method="POST" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl add-to-cart">
                                     @csrf
                                     <input type="hidden" name="course_id" value="{{ $item->id }}">
                                     <button type="submit">Tambahkan</button>

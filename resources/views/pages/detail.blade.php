@@ -6,20 +6,14 @@
             <h1 class="text-gray-400">Tanggal Rilis : {{ $course->created_at->format('d F Y') }}</h1>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                @php
-                    // Mengambil ID video dari link YouTube Music atau standar
-                    $videoId = parse_url($preview, PHP_URL_QUERY);
-                    parse_str($videoId, $params);
-                    $videoId = $params['v'] ?? null;
-                @endphp
-                @if ($videoId)
-                <div class="bg-white border border-zinc-200 rounded-xl">
-                    <iframe src="https://www.youtube.com/embed/{{ $videoId }}" class="w-full h-full" allowfullscreen></iframe>
-                </div>
+                @if($preview)
+                    <div class="bg-white border border-zinc-200 rounded-xl">
+                        <iframe src="{{ $preview }}" class="w-full h-full" allowfullscreen></iframe>
+                    </div>
                 @else
-                <div class="bg-white border border-zinc-200 rounded-xl">
-                    <p class="text-center">Preview tidak tersedia.</p>
-                </div>
+                    <div class="bg-white border border-zinc-200 rounded-xl">
+                        <p>No preview available.</p>
+                    </div>
                 @endif
                 <div class="grid grid-cols-1 gap-y-4">
                 <div class="bg-white p-4 border border-zinc-200 rounded-xl">
@@ -50,8 +44,15 @@
                         <p class="hidden">Tidak ada sub-courses.</p>
                     @endif
                     <div class="flex flex-col space-y-2 mt-4">
-                        <button class="bg-orange-500 text-white w-full py-2 rounded-xl">Gabung Sekarang</button>
-                        <button class="border border-orange-500 w-full py-2 text-orange-500 rounded-xl">Tambahkan Ke keranjang</button>
+                        @if(Auth::check())
+                            <form action="{{ route('client-add-cart') }}" method="POST" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl add-to-cart">
+                                @csrf
+                                <input type="hidden" name="course_id" value="{{ $course->id }}">
+                                <button type="submit">Tambahkan</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl">Tambahkan</a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -70,7 +71,15 @@
                                 </div>
                                 <h5 class="text-xl font-semibold">Rp {{ number_format($c->harga, 0, ',', '.') }}</h5>
                                 <div class="flex flex-row items-center justify-between gap-2">
-                                    <button class="w-full border border-orange-400 text-orange-400 py-2 rounded-xl">Tambahkan</button>
+                                    @if(Auth::check())
+                                        <form action="{{ route('client-add-cart') }}" method="POST" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl addCartClient">
+                                            @csrf
+                                            <input type="hidden" name="course_id" value="{{ $course->id }}">
+                                            <button type="submit">Tambahkan</button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}" class="w-full text-center border border-orange-400 text-orange-400 py-2 rounded-xl">Tambahkan</a>
+                                    @endif
                                     <a href="" class="w-full text-center bg-orange-400 text-white py-2 rounded-xl">Lihat Detail</a>
                                 </div>
                             </div>

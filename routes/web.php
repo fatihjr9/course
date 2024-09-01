@@ -85,6 +85,10 @@ Route::middleware([
         Route::post("/add-to-cart", [ClientCourses::class, "carts"])->name(
             "client-add-cart"
         );
+        Route::delete("/cart/remove/{id}", [
+            ClientCourses::class,
+            "removeFromCart",
+        ])->name("client-rm-cart");
     });
 });
 

@@ -41,6 +41,7 @@ class ClientCourses extends Controller
             compact("course", "total", "preview", "relatedCourses")
         );
     }
+
     // Cart dynamic
     public $cart = [];
     public function mount()
@@ -51,21 +52,40 @@ class ClientCourses extends Controller
     {
         $userId = Auth::id();
         $courseId = $request->input("course_id");
-        $course = Course::find($courseId);
-
-        // Check if item is already in the cart
-        if (
-            !Cart::where("user_id", $userId)
-                ->where("course_id", $courseId)
-                ->exists()
-        ) {
+        $exists = Cart::where("user_id", $userId)
+            ->where("course_id", $courseId)
+            ->exists();
+        if (!$exists) {
             Cart::create([
                 "user_id" => $userId,
                 "course_id" => $courseId,
             ]);
-
-            return response()->json();
+            return response()->json([
+                "success" => true,
+                "message" => "Item berhasil ditambahkan ke keranjang!",
+            ]);
+        } else {
+            return response()->json([
+                "success" => false,
+                "message" => "Item sudah ada di keranjang!",
+            ]);
         }
-        return response()->json();
+    }
+
+    public function removeFromCart($id)
+    {
+        $userId = Auth::id();
+
+        // Cari item di keranjang berdasarkan id
+        $cartItem = Cart::where("user_id", $userId)->where("id", $id)->first();
+
+        if ($cartItem) {
+            // Hapus item dari keranjang
+            $cartItem->delete();
+
+            return response()->json(["success" => "Item removed from cart"]);
+        }
+
+        return response()->json(["error" => "Item not found in cart"], 404);
     }
 }
