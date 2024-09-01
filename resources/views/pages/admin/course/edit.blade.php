@@ -1,0 +1,34 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-row items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Edit Kursus') }}
+            </h2>
+            <a href="{{ route('course-admin') }}" class="px-4 py-2 rounded-xl bg-red-50 text-red-500">Batal</a>
+        </div>
+    </x-slot>
+
+    <form action="{{ route('course-admin-update', $course->nama) }}" method="POST" class="bg-white mt-6 p-6 rounded-xl" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="flex flex-col space-y-2">
+                <label class="block text-sm font-medium text-gray-900">Nama Kursus</label>
+                <input type="text" name="nama" value="{{ $course->nama }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan nama kursus" required />
+            </div>
+            <div class="flex flex-col space-y-2">
+                <label class="block text-sm font-medium text-gray-900">Thumbnail</label>
+                <input name="thumbnail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full" type="file">
+            </div>
+            <div class="flex flex-col space-y-2">
+                <label class="block text-sm font-medium text-gray-900">Harga</label>
+                <input name="harga" type="number" value="{{ $course->harga }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan harga" required />
+            </div>
+            <div class="flex flex-col space-y-2">
+                <label class="block text-sm font-medium text-gray-900">Deskripsi</label>
+                <textarea name="deskripsi" rows="1" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan Deskripsi">{{ $course->deskripsi }}</textarea>
+            </div>
+        </div>
+        <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-lg mt-4">Lanjutkan</button>
+    </form>
+</x-app-layout>
