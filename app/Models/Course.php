@@ -15,6 +15,6 @@ class Course extends Model
     }
     public function cart()
     {
-        return $this->hasMany(Cart::class);
+        return $this->belongsToMany(Cart::class); // Gunakan relasi yang sesuai
     }
 }

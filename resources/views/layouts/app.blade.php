@@ -34,7 +34,7 @@
             @endif
 
             <!-- Page Content -->
-            <main class="max-w-screen-xl px-6 mx-auto">
+            <main class="max-w-screen-xl mx-auto">
                 {{ $slot }}
             </main>
         </div>

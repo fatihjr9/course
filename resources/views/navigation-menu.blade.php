@@ -16,7 +16,7 @@
                         <x-nav-link href="{{ route('dashboard-user') }}" :active="request()->routeIs('dashboard-user')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('dashboard-user') }}" :active="request()->routeIs('dashboard-user')">
+                        <x-nav-link href="{{ route('kursus-user') }}" :active="request()->routeIs('kursus-user')">
                             {{ __('Kursus saya') }}
                         </x-nav-link>
                         <x-nav-link href="{{ route('dashboard-user') }}" :active="request()->routeIs('dashboard-user')">
@@ -32,7 +32,7 @@
                         <x-nav-link href="{{ route('dashboard-admin') }}" :active="request()->routeIs('dashboard-admin')">
                             {{ __('Riwayat Pembelian') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('dashboard-admin') }}" :active="request()->routeIs('dashboard-admin')">
+                        <x-nav-link href="{{ route('user-admin-index') }}" :active="request()->routeIs('user-admin-index')">
                             {{ __('User') }}
                         </x-nav-link>
                     @endif

@@ -19,17 +19,6 @@
         @livewireStyles
     </head>
     <body>
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if (session('status.info'))
-            <div class="alert alert-info">
-                {{ session('info') }}
-            </div>
-        @endif
         <nav class="bg-white py-2 border-b border-gray-200 z-50 relative px-6">
           <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4">
             <a href="https://flowbite.com/" class="flex items-center space-x-3">
@@ -65,11 +54,10 @@
                                     </form>
                                 </div>
                             @endforeach
-                            <ul>
-                                <li>
-                                    <a href="{{ route('dashboard-user') }}" class="block w-full text-center mx-auto px-4 py-2 text-sm text-green-700 bg-green-100">Checkout</a>
-                                </li>
-                            </ul>
+                            <form id="payment-form" action="{{ route('client-payment') }}" method="POST">
+                                @csrf
+                                <button type="button" id="pay-button" class="w-full text-center mx-auto px-4 py-2 text-sm text-green-700 bg-green-100">Bayar Sekarang</button>
+                            </form>
                         @endif
                     </div>
                 @endauth
@@ -137,6 +125,9 @@
         <div class="font-sans text-gray-900 antialiased px-6">
             {{ $slot }}
         </div>
+        <script type="text/javascript"
+                src="https://app.sandbox.midtrans.com/snap/snap.js"
+                data-client-key="SB-Mid-client-EbZpArANxHBj9XHL"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
         <script>
@@ -172,6 +163,46 @@
                         alert('Item removed from cart!');
                         window.location.reload();
                     }
+                });
+            });
+            // Payment
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('pay-button').addEventListener('click', function() {
+                    // Fetch the Snap token from the server
+                    fetch('{{ route('client-payment') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({}) // Send any required data here
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.token) {
+                            window.snap.pay(data.token, {
+                                onSuccess: function(result) {
+                                    console.log('Payment successful:', result);
+                                    // Redirect or update the UI as needed
+                                },
+                                onPending: function(result) {
+                                    console.log('Payment pending:', result);
+                                    // Handle pending payment state
+                                },
+                                onError: function(result) {
+                                    console.log('Payment error:', result);
+                                    // Handle payment error
+                                },
+                                onClose: function() {
+                                    console.log('Payment popup closed');
+                                    // Handle popup close event
+                                }
+                            });
+                        } else {
+                            console.error('Snap token is not available');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching Snap token:', error));
                 });
             });
 

@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\ClientCourses;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CourseController;
@@ -21,6 +22,11 @@ Route::middleware([
         Route::get("/admin/dashboard", function () {
             return view("dashboard");
         })->name("dashboard-admin");
+        // Admin Kursus
+        Route::get("/admin/pengguna", [
+            AdminUserController::class,
+            "index",
+        ])->name("user-admin-index");
         // Admin Kursus
         Route::get("/admin/kursus", [CourseController::class, "index"])->name(
             "course-admin"
@@ -82,6 +88,24 @@ Route::middleware([
         Route::get("/user/dashboard", function () {
             return view("dashboard");
         })->name("dashboard-user");
+        // Kursus
+        Route::get("/user/kursus", [
+            ClientCourses::class,
+            "showCourseUser",
+        ])->name("kursus-user");
+        Route::get("/user/kursus/detail/{name}", [
+            ClientCourses::class,
+            "showDetailCourseUser",
+        ])->name("detail-kursus-user");
+
+        // Transaksi
+        Route::post("/payment-callback", [
+            ClientCourses::class,
+            "handleCallback",
+        ])->name("client-callback");
+        Route::post("/", [ClientCourses::class, "payment"])->name(
+            "client-payment"
+        );
         Route::post("/add-to-cart", [ClientCourses::class, "carts"])->name(
             "client-add-cart"
         );
